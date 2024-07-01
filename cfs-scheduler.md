@@ -58,13 +58,17 @@ static const int prio_to_weight[40] = {
 
 As we can observe in the above code block, nice values range from -20 to +19; lower nice values imply a higher weight for the process, and vice-versa. (Higher nice valued processes tend to be background and processor-intensive.) Using this mapping, we can now calculate dynamically the timeslice of each process with the the following mathematical expression:
 
-![](https://cdn.hashnode.com/res/hashnode/image/upload/v1704730979947/c3d92181-465a-4bef-bd5b-8d4af6dd2a5a.png align="center")
+<p align="center">
+  <img src="/images/timeslice.jpg" />
+</p>
 
 This formula and the given mapping show that the proportion of processor time allotted to each process solely depends upon the relative difference in niceness between it and the other processes in the runqueue.
 
 And for `vruntime`, the following formula is used for the ith iteration:
 
-![](https://cdn.hashnode.com/res/hashnode/image/upload/v1704731546837/3a59faf6-c458-4cd0-8101-59d1805d6f83.png align="center")
+<p align="center">
+  <img src="/images/vruntime.jpg" />
+</p>
 
 Where, `weight0` is the default weight of the process.
 
