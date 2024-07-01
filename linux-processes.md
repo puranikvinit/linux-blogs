@@ -1,10 +1,10 @@
 ---
 title: "Processes, as they are in the Linux Kernel"
-datePublished: Mon Jan 15 2024 17:35:40 GMT+0000 (Coordinated Universal Time)
-cuid: clrf7hm0p000509jxhw3repdl
-slug: linux-processes
-tags: linux, linux-kernel, computer-processes
-
+description: "The complete anatomy of a Linux Process"
+date: 2024-01-15
+tags: ["linux", "linux-kernel", "computer-processes"]
+author: "Vinit Puranik"
+toc: true
 ---
 
 Beneath the surface of an ever-snappy Linux machine, a bustling city of invisible workers known as "processes" are tirelessly running the show. From printing documents to streaming music, each task is a dedicated citizen in this microscopic metropolis, governed by the intricate laws of the Linux kernel.
@@ -15,7 +15,7 @@ In this article, we'll shed light on this hidden world, delving into the fascina
 
 A **process** is a running instance of a program, amidst its execution. It is more than just a piece of text (namely, the **text** section or the **code** section), though. When we talk about a process, we also need to take into consideration the resources allotted to it, such as Open files, Pending signals, Internal Kernel data, the State of the processor, Memory address space, the Threads working in unison under it, and also the Data section. These details, of every process, need to be efficiently managed by the kernel to perform effectively.
 
-*Note: "Threads", as "objects of activity under a process", is exceptionally explained by Robert Love in his book "Linux Kernel Development". The kernel, in reality, only knows and deals with threads. A process happens to be a set of threads sharing resources, and having the same Group ID (basically the Process ID).*
+_Note: "Threads", as "objects of activity under a process", is exceptionally explained by Robert Love in his book "Linux Kernel Development". The kernel, in reality, only knows and deals with threads. A process happens to be a set of threads sharing resources, and having the same Group ID (basically the Process ID)._
 
 Each thread in the Linux kernel also has its own set of resources, such as a Unique Program Counter, a Process Stack, a set of Process Registers, and a heap it shares with other threads under the same Group ID.
 
@@ -40,17 +40,13 @@ The kernel also has a macro named `current`, which allows quick and easy access 
 The above flow diagram perfectly describes the lifecycle of a Linux process.
 
 1. `TASK_RUNNING` - The process is either currently running, or waiting to be scheduled in the runqueue. If a process is in the user space, this is the only possible state in which the process can be.
-    
 2. `TASK_INTERRUPTIBLE` - The process is either blocked by a condition to be fulfilled, or is currently sleeping. The process in this state can also be woken up by sending appropriate signals.
-    
 3. `TASK_UNINTERRUPTIBLE` - The process is in a state similar to that of `TASK_INTERRUPTIBLE`, the only difference being it cannot be woken up even by sending signals. This is also the reason why it is less frequently used compared to `TASK_INTERRUPTIBLE`.
-    
 4. `TASK_TRACED` - The process and all its resources are being traced by another process. Generally the tracers are debuggers, which help log the tracee's activities. A good example is the `ptrace()` syscall, which allows the tracer to gain complete control over the execution of the tracee.
-    
-    *Note: The tracee is temporarily reparented to the tracer in the* `ptrace()` *syscall.*
-    
+
+   _Note: The tracee is temporarily reparented to the tracer in the_ `ptrace()` _syscall._
+
 5. `TASK_STOPPED` - The process has been terminated, and is not allowed to run any further.
-    
 
 The function `set_task_state(task, state)` is called to change the state of the process.
 
@@ -58,7 +54,7 @@ The function `set_task_state(task, state)` is called to change the state of the 
 
 The `init` process, having a Process ID of 1, is the mother of all processes, as all other processes spun up are eventually children of the init process. The `init` process is spun up in the last stage of the boot-up process. All the **initscripts** are executed, and the required child processes are spun up.
 
-*Note: The kernel maintains separate lists for processes that are* ***ptraced****, saving a lot of time when all the siblings that are being ptraced need to be reparented to their original parent.*
+_Note: The kernel maintains separate lists for processes that are_ **\*ptraced\*\***, saving a lot of time when all the siblings that are being ptraced need to be reparented to their original parent.\*
 
 # Creation of a Process
 
@@ -77,29 +73,19 @@ However, COW duplicates the page tables and process descriptors, which is the on
 Following is the flow of execution of code when the `fork()` syscall is triggered:
 
 1. `clone()` syscall (called by `fork()`) - accepts flags that indicate which resources need to be shared between the parent and the child.
-    
 2. `do_fork()` syscall (called by `clone()`), defined in `kernel/fork.c`.
-    
 3. `copy_process()` syscall (called by `do_fork()`) :
-    
-    * `dup_task_struct()` - creates a new kernel stack, `thread_info` and `task_struct` structures for the child, identical to those of the parent.
-        
-    * Resource limit checks are performed to see if the newly spun-up process will exceed maximum process limits.
-        
-    * Required members of task\_struct are updated to give a unique identity to the child process.
-        
-    * The state of the child process is set to `TASK_UNINTERRUPTIBLE` to ensure that the task cannot run yet.
-        
-    * `copy_flags()` - updates the flags of the child's process descriptor.
-        
-    * `alloc_pid()` - allocates a new PID to the child process.
-        
-    * The resources are either copied over or shared, depending upon the flags passed into the `clone()` syscall.
-        
-    * Cleanup code is executed, and a new pointer to the process descriptor of the child is returned.
-        
+
+   - `dup_task_struct()` - creates a new kernel stack, `thread_info` and `task_struct` structures for the child, identical to those of the parent.
+   - Resource limit checks are performed to see if the newly spun-up process will exceed maximum process limits.
+   - Required members of task_struct are updated to give a unique identity to the child process.
+   - The state of the child process is set to `TASK_UNINTERRUPTIBLE` to ensure that the task cannot run yet.
+   - `copy_flags()` - updates the flags of the child's process descriptor.
+   - `alloc_pid()` - allocates a new PID to the child process.
+   - The resources are either copied over or shared, depending upon the flags passed into the `clone()` syscall.
+   - Cleanup code is executed, and a new pointer to the process descriptor of the child is returned.
+
 4. If the above code executes perfectly, then the child process is put into the runqueue, ensuring that it runs before the parent to eliminate any overhead caused by COW.
-    
 
 # Kernel Threads
 
@@ -112,31 +98,19 @@ The Linux command `$ps -ef` lists all the kernel threads spun up by the kernel. 
 The code for the termination of a process is under the `do_exit()` function, defined in `kernel/exit.c`. The flow of execution of code when the `do_exit()` syscall is triggered is as follows:
 
 1. The `PF_EXITING` flag is set to indicate that the process is terminating.
-    
 2. `del_timer_sync()` - removes associated kernel timers.
-    
 3. `exit_mm()` - release the address space mapped to the process; if it is the only process under the respective Group ID, the address space is destroyed.
-    
 4. `exit_sem()` - all semaphores held by the process are removed.
-    
 5. `exit_files()` and `exit_fs()` - decrements the usage count of the mapped files and the respective filesystems; if the usage count reaches zero, the corresponding objects are destroyed.
-    
 6. Update the task's `exit_code`, which is to the parent when the `exit_notify()` function is called. The parent can retrieve the `exit_code` information and perform necessary actions, or ignore it. The child's state remains `TASK_ZOMBIE` until the parent is notified about the termination of the child.
-    
 7. `schedule()` - The core scheduler code is invoked to trigger the scheduler and schedule the next process for execution.
-    
 8. All the remaining resources are returned to the kernel, and will be available for allotment to new processes.
-    
 9. The process descriptor is destroyed only after the parent notifies the kernel that it is uninterested in retrieving information about its "zombie" child.
-    
 10. `release_task()` is invoked, which performs the following tasks:
-    
-    * `__exit_signal()` -&gt; `__unhash_process()` -&gt; `detach_pid()` -- deallocates the PID of the terminated process.
-        
-    * Cleanup code is executed, and kernel stats are updated.
-        
-    * The slabs and cache allotted to the `task_struct` process descriptor are released.
-        
+
+    - `__exit_signal()` -&gt; `__unhash_process()` -&gt; `detach_pid()` -- deallocates the PID of the terminated process.
+    - Cleanup code is executed, and kernel stats are updated.
+    - The slabs and cache allotted to the `task_struct` process descriptor are released.
 
 # Handling of Parentless Processes
 

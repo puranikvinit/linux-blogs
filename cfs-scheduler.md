@@ -1,17 +1,17 @@
 ---
 title: "CFS Scheduler in the Linux Kernel"
-datePublished: Mon Jan 08 2024 17:51:20 GMT+0000 (Coordinated Universal Time)
-cuid: clr57ysuw000309l2c5x8gy60
-slug: cfs-scheduler
-tags: linux, linux-kernel, scheduling-algorithms
-
+description: "Unveiling the Secret Sauce of Linux Performance!"
+date: 2024-01-08
+tags: ["linux", "linux-kernel", "scheduling-algorithms"]
+author: "Vinit Puranik"
+toc: true
 ---
 
 The Linux kernel is the backbone of countless devices, servers, and systems worldwide. But have you ever wondered why Linux systems feel so snappy, even with multiple applications running? The answer lies in a hidden gem called the **Completely Fair Scheduler**. This unsung hero works tirelessly behind the scenes, juggling tasks with surgical precision, ensuring your system feels smooth and responsive.
 
 In this article, we'll lift the hood and examine CFS' inner workings, uncovering its techniques for maximizing CPU utilization, prioritizing interactive tasks, and preventing resource hogs from ruining the party.
 
-*Note: The CFS Scheduler is the default scheduling class for processes spun up in the system. Linux supports multiple scheduling classes, each having priorities, and any process can be assigned to any scheduler.*
+_Note: The CFS Scheduler is the default scheduling class for processes spun up in the system. Linux supports multiple scheduling classes, each having priorities, and any process can be assigned to any scheduler._
 
 # History
 
@@ -19,7 +19,7 @@ Since the first version of the Linux Kernel, up until the 2.4 series, the schedu
 
 In the 2.5 series, the kernel received a new scheduler algorithm, namely the **O(1) scheduler** (named on the fact that it took constant time to calculate timeslices and per-processor runqueues), which aimed at addressing the issues with the previous scheduler.
 
-The O(1) scheduler was performing up to the mark and scaled very efficiently, but it was sub-par when it came to desktop systems, which involved interactive processes. Later, many new schedulers were tested to overcome this issue, the best amongst them being the **Rotating Staircase Deadline** scheduler, which introduced the concept of ***Fair Scheduling.*** This concept eventually made its way into the kernel as a replacement for the O(1) scheduler in v2.6.23, and was named the **Completely Fair Scheduler (CFS)**.
+The O(1) scheduler was performing up to the mark and scaled very efficiently, but it was sub-par when it came to desktop systems, which involved interactive processes. Later, many new schedulers were tested to overcome this issue, the best amongst them being the **Rotating Staircase Deadline** scheduler, which introduced the concept of **_Fair Scheduling._** This concept eventually made its way into the kernel as a replacement for the O(1) scheduler in v2.6.23, and was named the **Completely Fair Scheduler (CFS)**.
 
 # The concept of Fair Scheduling
 
@@ -73,9 +73,7 @@ Where, `weight0` is the default weight of the process.
 The CFS scheduler has multiple advantages over other UNIX schedulers, such as:
 
 1. There will be inefficient switching behaviours if nice values of processes are directly mapped onto timeslices, which would then require absolute values of timeslices for each nice value. This would result in having different processor shares for different nice values having the same relative difference, meaning "nicing down a process by one" has widely different results based on the starting nice value.
-    
 2. UNIX schedulers try to reduce the latency of interactive processes by providing freshly woken-up processes a priority boost and allowing them to run immediately, even if their timeslice has expired. Processes may exploit this advantage and try to obtain an unfair share of the CPU time. CFS tackles this issue by assigning time to processes in terms of CPU usage proportions.
-    
 
 # Implementation in the Linux Kernel
 
@@ -287,4 +285,4 @@ static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
 
 The CFS scheduler is a testament to the power of elegant engineering. It took a complex problem - sharing a single processor among countless competing processes - and crafted a fair and efficient solution. CFS has revolutionized the Linux experience and extended its influence to other operating systems and even real-time scheduling domains. As computing demands evolve, CFS remains a bedrock of fairness and performance, a living reminder that a well-designed algorithm can truly conquer chaos.
 
-*PS: This is my first-ever technical blog... So please do leave comments on how I can improve my content and writing, and keep supporting as a community!!*
+_PS: This is my first-ever technical blog... So please do leave comments on how I can improve my content and writing, and keep supporting as a community!!_
