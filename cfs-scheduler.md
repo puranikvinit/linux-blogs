@@ -59,7 +59,7 @@ static const int prio_to_weight[40] = {
 As we can observe in the above code block, nice values range from -20 to +19; lower nice values imply a higher weight for the process, and vice-versa. (Higher nice valued processes tend to be background and processor-intensive.) Using this mapping, we can now calculate dynamically the timeslice of each process with the the following mathematical expression:
 
 <p align="center">
-  <img src="/images/timeslice.jpg" />
+  <img src="/0xcode/images/timeslice.jpg" />
 </p>
 
 This formula and the given mapping show that the proportion of processor time allotted to each process solely depends upon the relative difference in niceness between it and the other processes in the runqueue.
@@ -67,7 +67,7 @@ This formula and the given mapping show that the proportion of processor time al
 And for `vruntime`, the following formula is used for the ith iteration:
 
 <p align="center">
-  <img src="/images/vruntime.jpg" />
+  <img src="/0xcode/images/vruntime.jpg" />
 </p>
 
 Where, `weight0` is the default weight of the process.

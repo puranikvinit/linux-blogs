@@ -26,7 +26,7 @@ There are two types of Virtualisations provided by the Linux kernel to every pro
 All the processes spun up by the Linux kernel are stored in a Doubly-Circular Linked List, namely the **task list**. In the header file `linux/sched.h` is defined a structure, [`task_struct`](https://github.com/torvalds/linux/blob/052d534373b7ed33712a63d5e17b2b6cdbce84fd/include/linux/sched.h#L748) which is essentially the process descriptor. As the name suggests, it contains all the information that is possibly out there about the process.
 
 <p align="center">
-  <img src="/images/task-struct.jpg" />
+  <img src="/0xcode/images/task-struct.jpg" />
 </p>
 
 Previously (before Linux Kernel v2.6), the `task_struct` structure was directly stored at the end of the kernel stack (upper or lower end, based on the processor's architecture) of every process. However, after the release of v2.6, the kernel now allocates memory to the `task_struct` structure based on the slab allocation algorithm (a slab is a set of physically contiguous pages of memory, and a cache is a set of slabs), improving the struct's access times. Now, since the memory for process descriptors is dynamically allocated, a new structure was introduced into the kernel, `struct thread_info`. This structure is now stored at the end of the kernel stack, and contains a pointer to the `task_struct` process descriptor.
@@ -39,7 +39,7 @@ The kernel also has a macro named `current`, which allows quick and easy access 
 
 <br>
 <p align="center">
-  <img src="/images/proc-states.jpg" />
+  <img src="/0xcode/images/proc-states.jpg" />
 </p>
 
 The above flow diagram perfectly describes the lifecycle of a Linux process.
